@@ -1,5 +1,6 @@
 from enum import Enum
-from pydantic import BaseModel, Field
+from typing import Literal, Optional
+from pydantic import BaseModel, Field, SecretStr
 
 
 class Criticidad(str, Enum):
@@ -20,3 +21,16 @@ class ExtraccionTecnica(BaseModel):
         max_length=256,
         description="Resumen técnico breve (1-2 oraciones) del contenido del texto.",
     )
+
+class Provider(str, Enum):
+    OPENAI = "openai"
+    ANTHROPIC = "anthropic"
+    GEMINI = "gemini"
+    NVIDIA = "nvidia"
+
+class LLMConfig(BaseModel):
+    provider: Provider
+    model: str
+    api_key: Optional[SecretStr] = None
+    temperature: float = Field(default=0.7, ge=0, le=2)
+    max_tokens: int = Field(default=1024, gt=0)
